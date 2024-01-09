@@ -14,13 +14,13 @@ I pieced this process together using the following resources:
 - A lot of guidance from the Empty Epsilon channels on the United Stellar Navy discord https://discord.gg/KHBQeEU
 
 # Components
-## Tools needed
+### Tools needed
 - Wire strippers
 - Electrical tape
 - Optional: Soldering iron/solder, depending on how you connect your wires
 - Optional: Drill for drilling out plastic electrical boxes, if used
 
-## Materials needed
+### Materials needed
 - LED strips: You're looking for 5V individually addressable 5050SMD strips.  For my tube I used a 60 LED/m roll https://a.co/d/ibcPaj2 ($20/5m), for my aluminum channels I used 144 LED/m strips https://a.co/d/7KyVqO5 ($14/1m)
 - ESP32 controller: You need 1 controller per strip, they won't work without it.  I used this 3-pack https://a.co/d/iQdDK9a for $15 (~$5/controller)
 - 1 spool 22AWG cable cord https://a.co/d/iMc7nA2 ($12/10m)
