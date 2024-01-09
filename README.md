@@ -52,12 +52,24 @@ I pieced this process together using the following resources:
 
 ## WLED Setup
 - Connect to WLED over WiFi with your browser
-- In LED, set the following
+
+- In WLED, set the following:
 
 #### LED Preferences:
 - Set "Length" to number of LCDs in your strip
 - Set GPIO to 16, or whichever pin you plugged green into on the board 
 
+#### Wifi Setup: 
+- (Optional) set up mDNS name
+- Check the "Disable WiFi Sleep" button
+
+#### Sync Interfaces Setup: 
+- Set DMX Mode to "Effect".  (Reminder: "Effect" uses 15 channels instead of 3)
+- (Optional) change "DMX Start Address" to a different starting channel if using multiple sACN devices in the universe.  For example, for a second WLED device, set start address to 16
+- (Optional) if you've configured multiple Segments, those addresses will also need to be accounted for in the config.  Each segment is another block of 15 channels.
+- These "Optional" entries will make more sense when you get into configuring the hardware.ini file
+
+## Configure Empty Epsilon hardware.ini file
 
 
 
