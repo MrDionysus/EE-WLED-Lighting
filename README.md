@@ -70,7 +70,73 @@ I pieced this process together using the following resources:
 - These "Optional" entries will make more sense when you get into configuring the hardware.ini file
 
 ## Configure Empty Epsilon hardware.ini file
+Once your lights are working, it's time to get them to play nicely with EE.  Lighting effects are defined in the "hardware.ini" file, which lives in the root of your Empty Epsilon folder.  The EE wiki's documentation on configuring the hardware.ini file is found at https://github.com/daid/EmptyEpsilon/wiki/DMX-Configuration#hardware
 
+I've attached my present hardware.ini to this repo, and I'll cover and try to explain what's going on in it. 
+Light Setup:  I have three lights 
+- a horizontal lightbar (HorizontalBar1) with 60 LEDs in a clear tube that was spray painted white.  I use this for a variety of conditional lighting effects.  It sits under my screen or on the table with players. In WLED it uses the default starting channel of 0, and has 1 segment.
+- a vertical lightbar (LightBar2) with a 1m 60 LED strip inside.  This bar shows the hull strength as a variable from 1-100 using red light.  As the hull takes damage, the light ticks down like a thermometer dropping.  This bar is attached to the left side of my projector screen. In WLED it uses the DMX Start Address of 16, and has 1 segment.   
+- a vertical lightbar (LightBar3) with a 1m 144 LED strip inside.  This bar separately shows front and rear shield strength as a variable from 1-100 using blue light.  As the shields takes damage, the light ticks down like a thermometer dropping. It ticks down from the top for front shields, and from the bottom for rear shields. This bar is attached to the right side of my projector screen.  In WLED it uses the DMX Start Address of 31, and has 5 segments. The segments include the two blue variable segments and three solid white segments used as dividers so that players can see where the shield levels are ticking down from.
+
+The **[hardware]** lines of the hardware.ini just tell EE to communicate with a sACN device.  sACN broadcasts over the whole network via UDP.  You do not need to (read: cannot) specify the addresses of your devices.
+
+The **[channels]** lines defines the channels that EE will use when sending DMX data to devices.  Because we configured WLAN to use the "Effect" mode, we need 15 channels **per segment** used.  The maximum amount of available channels is 512.  In my hardware.ini, you'll see that I had to have five separate channel lists for LightBar3 because it has 5 segments.
+
+The rest of the data in hardware.ini defines various **[state]** and **[event]** effects which actually make the lights do what we want. 
+
+#### Simple state
+```
+[state]
+condition = HasShip                     
+target = LightBar3Top
+value = .7,0,0,0,0,0,1,1,1,0,0,0,0,0,0
+```
+This block specifies the condition (always on if the players have a ship), the target (one of the segments of LightBar3), and the value, which is the code being sent to the 15 channels defined in **[channels]** for that device.  The 15 channels are as follows:
+```
+1	Master Dimmer
+2	Effect mode ID
+3	Effect speed
+4	Effect intensity
+5	Effect palette ID
+6	Effect option
+7	Red Primary
+8	Green Primary
+9	Blue Primary
+10	Red Secondary
+11	Green Secondary
+12	Blue Secondary
+13	Red Tertiary
+14	Green Tertiary
+15	Blue Tertiary
+```
+so, in the example above, I'm using .7 to control the total brightness, the effect "0" which is known as "solid" in WLED, and my Red, Green, and Blue Primaries are all set to 1, creating white.  Effect speed and intensity are not used because effect 0/Solid doesn't do anything with those.
+
+#### slightly less simple event
+I also want my HorizontalBar1 to flash whenever the ship takes hull damage.  For this, we'll use the following code:
+```
+[event]
+trigger = <Hull                         # When our hull is damaged generate a red flash
+target = HorizontalBar1                     
+runtime = .1
+value =  .4, [1], [255], [255], 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+```
+Here we have a trigger telling this event to fire when the hull value foes down.  The target is HorizontalBar1, and now we specify a runtime to say how long the event should last.  In the value I'm using .4 for overall brightness, effect mode "1" which is known as "Blink" in WLED, and now I'm setting the effect speed and intensity to [255] so that they both go as fast as possible (but only for .1 second).  This gives me a single flash when hull damage is taken.
+
+#### more complex state
+Finally, let's look at the Hull Strength bar on the left.  This state utilizes EE's "variable" effect in the state definition and pairs that with WLED's "Percent" effect.
+```
+[state]
+condition = HasShip              # Red light tracking percentage of hull left
+target = LightBar2
+effect = variable
+input = Hull
+min_input = 0
+max_input = 100
+min_output = .1,[98],[255],[0],0,0,1,0,0,0,0,0,0,0,0
+max_output = .1,[98],[255],[100],0,0,1,0,0,0,0,0,0,0,0
+```
+
+I'm using .1 brightness because blue is really bright in a dark room, then effect mode "98" which is known as "Percent" in WLED.  I use a speed of [255] for instantaneous filling, and effect intensity is variable between [0] and [100], which corresponds to the min and max inputs. So as EE tracks the decrease from max_input to min_input as shields take damage, the corresponding percentage of output is controlled by the "Percent" effect and channel 4 (effect intensity).  
 
 
 
