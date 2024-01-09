@@ -53,9 +53,10 @@ I pieced this process together using the following resources:
 ## WLED Setup
 - Connect to WLED over WiFi with your browser
 - In LED, set the following
-- LED Preferences:
--- Set "Length" to number of LCDs in your strip
--- Set GPIO to 16, or whichever pin you plugged green into on the board 
+
+#### LED Preferences:
+- Set "Length" to number of LCDs in your strip
+- Set GPIO to 16, or whichever pin you plugged green into on the board 
 
 
 
