@@ -13,7 +13,7 @@ I pieced this process together using the following resources:
 - https://www.youtube.com/watch?v=Er_NqsJUQ0o
 - A lot of guidance from the Empty Epsilon channels on the United Stellar Navy discord https://discord.gg/KHBQeEU
 
-#Components
+# Components
 ## Tools needed
 - Wire strippers
 - Electrical tape
